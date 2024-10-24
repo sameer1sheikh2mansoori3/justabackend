@@ -15,9 +15,10 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
         if ( findUser ) {
             
             const findRes = new ApiResponse(409, findUser, "user with this email is already exist")
-            return res.status(409).json(
+             res.status(409).json(
                 findRes
             )
+            return;
             
         }
         const createdUser = await User.create({
@@ -32,7 +33,8 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
             data: token
         },
             "user created successfully")
-        return res.status(200).json({
+            res.cookie('token' , token)
+         res.status(200).json({
             message: apiResponse
         })
 

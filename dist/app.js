@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 exports.app = app;
 // Define allowed origins (without the trailing slash)
@@ -22,6 +23,7 @@ app.use((0, cors_1.default)({
     credentials: true, // Allow cookies or HTTP authentication
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
 }));
+app.use((0, cookie_parser_1.default)());
 // Body parser middleware
 app.use(express_1.default.json({ limit: "16kb" }));
 // Define your routes after CORS middleware

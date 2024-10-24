@@ -30,6 +30,11 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if ((findUser === null || findUser === void 0 ? void 0 : findUser._id) !== null) {
             const userId = (findUser === null || findUser === void 0 ? void 0 : findUser._id.toString()) || "";
             const token = jsonwebtoken_1.default.sign(userId, 'secret');
+            res.cookie('token', token, {
+                httpOnly: true,
+                sameSite: "strict",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             const apiResponseUser = new ApiResponse_1.ApiResponse(200, {
                 data: token
             }, "welcome back logged in user");

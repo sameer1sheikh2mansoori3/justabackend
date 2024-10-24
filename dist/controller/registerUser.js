@@ -25,7 +25,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         console.log(findUser, "my find user");
         if (findUser) {
             const findRes = new ApiResponse_1.ApiResponse(409, findUser, "user with this email is already exist");
-            return res.status(409).json(findRes);
+            res.status(409).json(findRes);
+            return;
         }
         const createdUser = yield userModel_1.User.create({
             username,
@@ -38,7 +39,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const apiResponse = new ApiResponse_1.ApiResponse(200, {
             data: token
         }, "user created successfully");
-        return res.status(200).json({
+        res.cookie('token', token);
+        res.status(200).json({
             message: apiResponse
         });
     }

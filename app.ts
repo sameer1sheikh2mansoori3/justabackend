@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import userRouter from './routes/userRoutes';
 import productRouter from './routes/productRoutes';
-
+import cookieParser from 'cookie-parser'
 const app: Express = express();
 
 // Define allowed origins (without the trailing slash)
@@ -19,6 +19,7 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE"],  // Allowed methods
 }));
 
+app.use(cookieParser());
 // Body parser middleware
 app.use(express.json({ limit: "16kb" }));
 

@@ -29,6 +29,15 @@ const loginUser = async(req: Request, res: Response): Promise<any> => {
   if( findUser?._id !== null ){
     const userId = findUser?._id.toString() || "" 
     const token =  jwt.sign(userId  , 'secret' )
+
+    res.cookie('token' , token , 
+        {
+            httpOnly: true,
+            
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        }
+    )
       const apiResponseUser = new ApiResponse(200 , {
         data:token
      },

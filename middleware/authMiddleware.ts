@@ -1,31 +1,36 @@
-import { Request, Response, NextFunction } from "express"
+import { RequestHandler, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { IUser, User } from "../models/userModel";
-import { ApiError } from "../utils/ApiError";
-interface CustomRequest extends Request {
-    token?: string;
-    user?:IUser  // Optional token property
+
+// Define the CustomReq interface if you need to extend the request object
+interface CustomReq extends Request {
+  userId?: any;
+  cookies: { token: any };
 }
-interface Verify{
-    _id:string
-}
-export const verifyJWT = async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const token = req.header('authorization')
-   
-    
-    req.token = token
-    
-    const verified =  jwt.verify(token || "" , 'secret')
-    const findUser = await User.findById({
-        _id :verified
-    })
-    
-    if( !findUser ){
-        throw new ApiError(404 , "user is unathorized ")
+
+export const verifyJWT: RequestHandler | any = (req: CustomReq, res: Response, next: NextFunction): void => {
+  const token = req.cookies.token
+  console.log(token , "this is my token")
+  
+  if (!token) {
+    res.status(401).json({ success: false, message: "Unauthorized - no token provided" });
+    return; // Explicitly return to ensure the function doesn't continue
+  }
+
+  try {
+    const decoded : any = jwt.verify(token, 'secret') // Cast to your JWT payload type
+
+    if (!decoded) {
+      res.status(401).json({ success: false, message: "Unauthorized - invalid token" });
+      return; // Explicitly return to avoid execution continuing
     }
-    req.user = findUser
-    next();
 
+    console.log(decoded , "this is our decoded")
+    req.userId = decoded// Assuming JWT contains a userId
 
-}
-
+    next(); // Call next() to proceed to the next middleware
+  } catch (error) {
+    console.error("Error in verifyToken: ", error);
+    res.status(500).json({ success: false, message: "Server error" });
+    return; // Ensure the function returns after sending a response
+  }
+};
